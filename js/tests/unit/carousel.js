@@ -79,16 +79,18 @@ $(function () {
   QUnit.test('should not fire slid when slide is prevented', function (assert) {
     assert.expect(1)
     var done = assert.async()
-    $('<div class="carousel"/>')
-      .on('slide.bs.carousel', function (e) {
-        e.preventDefault()
-        assert.ok(true, 'slide event fired')
-        done()
-      })
-      .on('slid.bs.carousel', function () {
-        assert.ok(false, 'slid event fired')
-      })
-      .bootstrapCarousel('next')
+    var $carousel = $('<div class="carousel"/>')
+    $carousel.appendTo('#qunit-fixture')
+
+    EventHandler.on($carousel[0], 'slide.bs.carousel', function (e) {
+      e.preventDefault()
+      assert.ok(true, 'slide event fired')
+      done()
+    })
+    EventHandler.on($carousel[0], 'slid.bs.carousel', function () {
+      assert.ok(false, 'slid event fired')
+    })
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should reset when slide is prevented', function (assert) {
@@ -114,10 +116,11 @@ $(function () {
         + '<a class="right carousel-control" href="#carousel-example-generic" data-slide="next"/>'
         + '</div>'
     var $carousel = $(carouselHTML)
+    $carousel.appendTo('#qunit-fixture')
 
     var done = assert.async()
-    $carousel
-      .one('slide.bs.carousel', function (e) {
+    EventHandler
+      .one($carousel[0], 'slide.bs.carousel', function (e) {
         e.preventDefault()
         setTimeout(function () {
           assert.ok($carousel.find('.carousel-item:eq(0)').is('.active'), 'first item still active')
@@ -125,7 +128,9 @@ $(function () {
           $carousel.bootstrapCarousel('next')
         }, 0)
       })
-      .one('slid.bs.carousel', function () {
+
+    EventHandler
+      .one($carousel[0], 'slid.bs.carousel', function () {
         setTimeout(function () {
           assert.ok(!$carousel.find('.carousel-item:eq(0)').is('.active'), 'first item still active')
           assert.ok(!$carousel.find('.carousel-indicators li:eq(0)').is('.active'), 'first indicator still active')
@@ -134,7 +139,8 @@ $(function () {
           done()
         }, 0)
       })
-      .bootstrapCarousel('next')
+
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should fire slide event with direction', function (assert) {
@@ -173,23 +179,24 @@ $(function () {
         + '<a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>'
         + '</div>'
     var $carousel = $(carouselHTML)
+    $carousel.appendTo('#qunit-fixture')
 
     var done = assert.async()
 
-    $carousel
-      .one('slide.bs.carousel', function (e) {
+    EventHandler
+      .one($carousel[0], 'slide.bs.carousel', function (e) {
         assert.ok(e.direction, 'direction present on next')
         assert.strictEqual(e.direction, 'left', 'direction is left on next')
 
-        $carousel
-          .one('slide.bs.carousel', function (e) {
+        EventHandler
+          .one($carousel[0], 'slide.bs.carousel', function (e) {
             assert.ok(e.direction, 'direction present on prev')
             assert.strictEqual(e.direction, 'right', 'direction is right on prev')
             done()
           })
-          .bootstrapCarousel('prev')
+        $carousel.bootstrapCarousel('prev')
       })
-      .bootstrapCarousel('next')
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should fire slid event with direction', function (assert) {
@@ -228,23 +235,24 @@ $(function () {
         + '<a class="right carousel-control" href="#myCarousel" data-slide="next">&rsaquo;</a>'
         + '</div>'
     var $carousel = $(carouselHTML)
+    $carousel.appendTo('#qunit-fixture')
 
     var done = assert.async()
 
-    $carousel
-      .one('slid.bs.carousel', function (e) {
+    EventHandler
+      .one($carousel[0], 'slid.bs.carousel', function (e) {
         assert.ok(e.direction, 'direction present on next')
         assert.strictEqual(e.direction, 'left', 'direction is left on next')
 
-        $carousel
-          .one('slid.bs.carousel', function (e) {
+        EventHandler
+          .one($carousel[0], 'slid.bs.carousel', function (e) {
             assert.ok(e.direction, 'direction present on prev')
             assert.strictEqual(e.direction, 'right', 'direction is right on prev')
             done()
           })
-          .bootstrapCarousel('prev')
+        $carousel.bootstrapCarousel('prev')
       })
-      .bootstrapCarousel('next')
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should fire slide event with relatedTarget', function (assert) {
@@ -284,14 +292,17 @@ $(function () {
         + '</div>'
 
     var done = assert.async()
+    var $carousel = $(template)
+    $carousel.appendTo('#qunit-fixture')
 
-    $(template)
-      .on('slide.bs.carousel', function (e) {
+    EventHandler
+      .one($carousel[0], 'slide.bs.carousel', function (e) {
         assert.ok(e.relatedTarget, 'relatedTarget present')
         assert.ok($(e.relatedTarget).hasClass('carousel-item'), 'relatedTarget has class "item"')
         done()
       })
-      .bootstrapCarousel('next')
+
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should fire slid event with relatedTarget', function (assert) {
@@ -331,14 +342,17 @@ $(function () {
         + '</div>'
 
     var done = assert.async()
+    var $carousel = $(template)
+    $carousel.appendTo('#qunit-fixture')
 
-    $(template)
-      .on('slid.bs.carousel', function (e) {
+    EventHandler
+      .one($carousel[0], 'slid.bs.carousel', function (e) {
         assert.ok(e.relatedTarget, 'relatedTarget present')
         assert.ok($(e.relatedTarget).hasClass('carousel-item'), 'relatedTarget has class "item"')
         done()
       })
-      .bootstrapCarousel('next')
+
+    $carousel.bootstrapCarousel('next')
   })
 
   QUnit.test('should fire slid and slide events with from and to', function (assert) {
